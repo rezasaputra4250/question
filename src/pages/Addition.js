@@ -33,34 +33,27 @@ const Addition = ({ playerData, setPlayerData }) => {
   useEffect(() => {
     generateRandomProblem();
   }, [playerData.level]);
-
+  
   const generateRandomProblem = () => {
-    const level = playerData.level;
-    let min = 1;
-    let max = 10;
-
-    if (level === 2) {
-      min = 10;
-      max = 100;
-    } else if (level === 3) {
-      min = 100;
-      max = 1000;
-    } else if (level === 4) {
-      min = 1000;
-      max = 10000;
-    } else if (level >= 5) {
-      min = 10000;
-      max = 100000;
-    }
-
-    const num1 = Math.floor(Math.random() * (max - min + 1)) + min;
-    const num2 = Math.floor(Math.random() * (max - min + 1)) + min;
+    // Ambil level berdasarkan pengalaman dari playerData
+    const level = getLevelFromExp(playerData.exp);
+  
+    // Tentukan jumlah angka yang digunakan berdasarkan level
+    const numDigits = level; // Misalnya, level 1 -> 1 digit, level 2 -> 2 digit, dst.
+  
+    // Menghasilkan soal dengan jumlah angka sesuai level
+    const num1 = Math.floor(Math.random() * Math.pow(10, numDigits));
+    const num2 = Math.floor(Math.random() * Math.pow(10, numDigits));
+  
+    // Update state dengan soal baru
     setNum1(num1);
     setNum2(num2);
-
+  
+    // Reset timer dan mulai timer
     setTimer(60);
     startTimer();
   };
+  
 
   const startTimer = () => {
     if (timerInterval) clearInterval(timerInterval);
@@ -153,15 +146,20 @@ const Addition = ({ playerData, setPlayerData }) => {
       handleSubmit();
     }
   };
+const handleRestart = () => {
+  const updatedData = { ...playerData };
 
-  const handleRestart = () => {
-    const updatedData = { ...playerData };
-    updatedData.hp = 3; // Misalnya, set HP kembali ke 3 saat melanjutkan
-    setPlayerData(updatedData);
-    localStorage.setItem('player', JSON.stringify(updatedData));
-    setShowGameOverModal(false);
-    generateRandomProblem();
-  };
+  // Set HP kembali ke 3 dan kurangi EXP
+  updatedData.hp = 3;
+  updatedData.exp = Math.max(0, updatedData.exp - 100);  // Mengurangi 100 exp, pastikan exp tidak negatif
+  
+  setPlayerData(updatedData);
+  localStorage.setItem('player', JSON.stringify(updatedData));
+
+  setShowGameOverModal(false);
+  generateRandomProblem();
+};
+
 
   const handleClose = () => {
     alert('Terima kasih sudah bermain!');  // Keluar dari game
