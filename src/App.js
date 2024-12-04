@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import LoginModal from './components/LoginModal';
 import ProfileModal from './components/ProfileModal';
-import Addition from './pages/Addition';  
+import Addition from './pages/Addition';
+import Subtraction from './pages/Subtraction';  // Add import for other pages
+import Multiplication from './pages/Multiplication';
+import Division from './pages/Division';  // Add import for Division page
 import './index.css'; 
 
 const App = () => {
@@ -93,38 +97,46 @@ const App = () => {
   const handleCloseProfileModal = () => setIsProfileModalOpen(false);
 
   return (
-    <div className="App">
-      <Navbar
-        playerData={playerData}
-        onLoginClick={handleLoginClick}
-        onEditProfileClick={handleEditProfileClick}
-        onViewProfileClick={handleViewProfileClick}
-        onDeleteAccount={handleDeleteAccount}
-      />
+    <Router>
+      <div className="App">
+        <Navbar
+          playerData={playerData}
+          onLoginClick={handleLoginClick}
+          onEditProfileClick={handleEditProfileClick}
+          onViewProfileClick={handleViewProfileClick}
+          onDeleteAccount={handleDeleteAccount}
+        />
 
-      <LoginModal
-        isModalOpen={isModalOpen}
-        onClose={handleCloseModal}
-        firstName={firstName}
-        lastName={lastName}
-        gender={gender}
-        birthDate={birthDate}
-        onSubmit={handleSubmit}
-        onChangeFirstName={setFirstName}
-        onChangeLastName={setLastName}
-        onChangeGender={setGender}
-        onChangeBirthDate={setBirthDate}
-        isEditProfile={isEditProfile}  // Pass the edit profile state
-      />
+        <LoginModal
+          isModalOpen={isModalOpen}
+          onClose={handleCloseModal}
+          firstName={firstName}
+          lastName={lastName}
+          gender={gender}
+          birthDate={birthDate}
+          onSubmit={handleSubmit}
+          onChangeFirstName={setFirstName}
+          onChangeLastName={setLastName}
+          onChangeGender={setGender}
+          onChangeBirthDate={setBirthDate}
+          isEditProfile={isEditProfile}  // Pass the edit profile state
+        />
 
-      <ProfileModal
-        isProfileModalOpen={isProfileModalOpen}
-        playerData={playerData}
-        onClose={handleCloseProfileModal}
-      />
+        <ProfileModal
+          isProfileModalOpen={isProfileModalOpen}
+          playerData={playerData}
+          onClose={handleCloseProfileModal}
+        />
 
-      {playerData && <Addition playerData={playerData} setPlayerData={setPlayerData} />} {/* Show Addition component if player is logged in */}
-    </div>
+        <Switch>
+          <Route path="/penjumlahan" render={() => playerData && <Addition playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/pengurangan" render={() => playerData && <Subtraction playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/perkalian" render={() => playerData && <Multiplication playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/pembagian" render={() => playerData && <Division playerData={playerData} setPlayerData={setPlayerData} />} />
+          {/* You can add more routes here for other pages */}
+        </Switch>
+      </div>
+    </Router>
   );
 };
 
