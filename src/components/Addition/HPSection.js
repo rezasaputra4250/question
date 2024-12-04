@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const HPSection = ({ hp }) => (
-  <div className="mt-4 text-center">
-    <h2 className="text-xl font-semibold">HP Pemain: {hp}</h2>
-  </div>
-);
+const HPSection = ({ hp }) => {
+  useEffect(() => {
+    // Menampilkan HP di console setiap kali HP berubah
+    console.log(`HP Pemain: ${hp}`);
+  }, [hp]); // Menampilkan saat HP berubah
+
+  return null;
+};
 
 export default HPSection;
