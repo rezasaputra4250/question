@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 // Mengimpor data pengalaman (level dan pengalaman) dari file JSON yang ada di folder 'data/experiences.json'.
 import experienceData from '../data/experiences.json'; 
 
@@ -16,6 +16,21 @@ const getLevelFromExp = (exp) => {
   return experienceData[experienceData.length - 1].level;
 };
 
+// Fungsi untuk menghitung umur berdasarkan tanggal lahir
+const calculateAge = (birthDate) => {
+  const birthDateObj = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birthDateObj.getFullYear();
+  const month = today.getMonth();
+  const day = today.getDate();
+
+  // Menyesuaikan umur jika belum melewati tanggal lahir tahun ini
+  if (month < birthDateObj.getMonth() || (month === birthDateObj.getMonth() && day < birthDateObj.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 const ProfileModal = ({ isProfileModalOpen, playerData, onClose }) => {
   // Jika modal tidak terbuka atau data pemain tidak tersedia, tidak menampilkan apa pun
   if (!isProfileModalOpen || !playerData) return null;
@@ -30,6 +45,9 @@ const ProfileModal = ({ isProfileModalOpen, playerData, onClose }) => {
     return acc;
   }, {}) : {};
 
+  // Menghitung umur pemain berdasarkan tanggal lahir
+  const playerAge = calculateAge(playerData.birthDate);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -41,8 +59,8 @@ const ProfileModal = ({ isProfileModalOpen, playerData, onClose }) => {
         {/* Menampilkan jenis kelamin pemain */}
         <p><strong>Gender:</strong> {playerData.gender}</p>
         
-        {/* Menghitung dan menampilkan umur berdasarkan data yang ada */}
-        <p><strong>Age:</strong> {playerData.age}</p>
+        {/* Menampilkan umur yang dihitung berdasarkan tanggal lahir */}
+        <p><strong>Age:</strong> {playerAge}</p>
         
         {/* Menampilkan MP (Mana Points) pemain */}
         <p><strong>MP:</strong> {playerData.mp}</p>
