@@ -18,7 +18,11 @@ const App = () => {
   useEffect(() => {
     const savedPlayerData = localStorage.getItem('player');
     if (savedPlayerData) {
-      setPlayerData(JSON.parse(savedPlayerData));
+      const parsedPlayerData = JSON.parse(savedPlayerData);
+      setPlayerData(parsedPlayerData);
+      
+      // Log data from localStorage
+      console.log('Data dari localStorage:', parsedPlayerData);
     }
   }, []);
 
@@ -43,9 +47,8 @@ const App = () => {
       lastName,
       gender,
       birthDate,
+      hp: 10,   // Set default HP value
       mp: 100,   // Set default MP value
-      hp: 100,   // Set default HP value
-      level: 1,  // Set default Level
       exp: 0,    // Set default Exp
     };
 
@@ -55,6 +58,9 @@ const App = () => {
     setPlayerData(player);
     setIsModalOpen(false); // Close the modal after submit
     alert('Data player telah disimpan!');
+
+    // Log the saved data to console
+    console.log('Data player disimpan di localStorage:', player);
 
     // Clear form data after submission
     setFirstName('');
@@ -78,6 +84,9 @@ const App = () => {
     localStorage.removeItem('player');
     setPlayerData(null);
     alert('Akun telah dihapus!');
+    
+    // Log the deletion in console
+    console.log('Data player telah dihapus dari localStorage');
   };
 
   const handleViewProfileClick = () => setIsProfileModalOpen(true);
