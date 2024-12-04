@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import LoginModal from './components/LoginModal';
 import ProfileModal from './components/ProfileModal';
 import Addition from './pages/Addition';
-import Subtraction from './pages/Subtraction';  // Add import for other pages
+import Subtraction from './pages/Subtraction';
 import Multiplication from './pages/Multiplication';
-import Division from './pages/Division';  // Add import for Division page
-import './index.css'; 
+import Division from './pages/Division';
+import './index.css';
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,14 +24,10 @@ const App = () => {
     if (savedPlayerData) {
       const parsedPlayerData = JSON.parse(savedPlayerData);
       setPlayerData(parsedPlayerData);
-      
-      // Log data from localStorage
-      console.log('Data dari localStorage:', parsedPlayerData);
     }
   }, []);
 
   const handleLoginClick = () => {
-    // Reset form values before opening modal
     setFirstName('');
     setLastName('');
     setGender('');
@@ -45,28 +41,20 @@ const App = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Default values for new player stats (MP, HP, Level, Exp)
     const player = {
       firstName,
       lastName,
       gender,
       birthDate,
-      hp: 10,   // Set default HP value
-      mp: 100,   // Set default MP value
-      exp: 0,    // Set default Exp
+      hp: 10,  // Set default HP value
+      mp: 100, // Set default MP value
+      exp: 0,  // Set default Exp
     };
 
-    // Save to localStorage
     localStorage.setItem('player', JSON.stringify(player));
-
     setPlayerData(player);
-    setIsModalOpen(false); // Close the modal after submit
+    setIsModalOpen(false);
     alert('Data player telah disimpan!');
-
-    // Log the saved data to console
-    console.log('Data player disimpan di localStorage:', player);
-
-    // Clear form data after submission
     setFirstName('');
     setLastName('');
     setGender('');
@@ -88,9 +76,6 @@ const App = () => {
     localStorage.removeItem('player');
     setPlayerData(null);
     alert('Akun telah dihapus!');
-    
-    // Log the deletion in console
-    console.log('Data player telah dihapus dari localStorage');
   };
 
   const handleViewProfileClick = () => setIsProfileModalOpen(true);
@@ -128,13 +113,13 @@ const App = () => {
           onClose={handleCloseProfileModal}
         />
 
-        <Switch>
-          <Route path="/penjumlahan" render={() => playerData && <Addition playerData={playerData} setPlayerData={setPlayerData} />} />
-          <Route path="/pengurangan" render={() => playerData && <Subtraction playerData={playerData} setPlayerData={setPlayerData} />} />
-          <Route path="/perkalian" render={() => playerData && <Multiplication playerData={playerData} setPlayerData={setPlayerData} />} />
-          <Route path="/pembagian" render={() => playerData && <Division playerData={playerData} setPlayerData={setPlayerData} />} />
-          {/* You can add more routes here for other pages */}
-        </Switch>
+        {/* Routes untuk halaman-halaman matematika */}
+        <Routes>
+          <Route path="/penjumlahan" element={playerData && <Addition playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/pengurangan" element={playerData && <Subtraction playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/perkalian" element={playerData && <Multiplication playerData={playerData} setPlayerData={setPlayerData} />} />
+          <Route path="/pembagian" element={playerData && <Division playerData={playerData} setPlayerData={setPlayerData} />} />
+        </Routes>
       </div>
     </Router>
   );
