@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import experienceData from '../../data/experiences.json'; // Mengimpor data pengalaman dari file JSON
 
 const getLevelFromExp = (exp) => {
@@ -12,12 +12,9 @@ const getLevelFromExp = (exp) => {
 };
 
 const LevelSection = ({ exp }) => {
-  const [level, setLevel] = useState(getLevelFromExp(exp));
-
   useEffect(() => {
     // Menghitung level baru berdasarkan pengalaman yang terbaru
     const newLevel = getLevelFromExp(exp);
-    setLevel(newLevel);
     console.log(`Pemain Level: ${newLevel}, Pengalaman: ${exp}`);
   }, [exp]); // Melacak perubahan exp dan menghitung level berdasarkan exp
 
