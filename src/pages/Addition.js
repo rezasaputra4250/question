@@ -5,6 +5,7 @@ import SkillSection from '../components/Addition/SkillSection';
 import LevelSection from '../components/Addition/LevelSection';
 import HPSection from '../components/Addition/HPSection';
 import { SkillModal, LevelUpModal } from '../components/Addition/Modals';
+import GameOverModal from '../components/Addition/GameOverModal';  // Import GameOverModal
 import experienceData from '../data/experiences.json';  // Pastikan data experience sudah ada di sini
 
 // Fungsi untuk menghitung level berdasarkan pengalaman (exp)
@@ -27,6 +28,7 @@ const Addition = ({ playerData, setPlayerData }) => {
   const [skillMessage, setSkillMessage] = useState('');
   const [timer, setTimer] = useState(60);
   const [timerInterval, setTimerInterval] = useState(null);
+  const [showGameOverModal, setShowGameOverModal] = useState(false); // State untuk modal Game Over
 
   useEffect(() => {
     generateRandomProblem();
@@ -74,32 +76,32 @@ const Addition = ({ playerData, setPlayerData }) => {
     }, 1000);
     setTimerInterval(interval);
   };
-
   const handleTimeUp = () => {
     if (playerData.hp > 0) {
       const updatedData = { ...playerData };
-      updatedData.hp -= 1;
+      updatedData.hp -= 1;  // Hanya mengurangi HP saat waktu habis
       setPlayerData(updatedData);
       localStorage.setItem('player', JSON.stringify(updatedData));
     } else {
-      alert('Game Over! HP habis.');
+      setShowGameOverModal(true);  // Tampilkan modal Game Over jika HP habis
     }
+  
     setUserAnswer('');
     generateRandomProblem();
   };
-
+  
   const handleSubmit = () => {
     const correctAnswer = num1 + num2;
     if (Number(userAnswer) === correctAnswer) {
       const prevLevel = playerData.level;
       const prevSkillLevel = playerData.skills?.penjumlahan?.level || 0;
-
+  
       let newExp = playerData.exp + 10;
       let newLevel = getLevelFromExp(newExp);  // Level dihitung berdasarkan exp
-
+  
       let newSkillExp = (playerData.skills?.penjumlahan?.exp || 0) + 10;
       let newSkillLevel = Math.floor(newSkillExp / 100) + 1;
-
+  
       const updatedSkills = { ...playerData.skills };
       if (!updatedSkills.penjumlahan) {
         updatedSkills.penjumlahan = {
@@ -112,24 +114,24 @@ const Addition = ({ playerData, setPlayerData }) => {
         updatedSkills.penjumlahan.exp = newSkillExp;
         updatedSkills.penjumlahan.level = newSkillLevel;
       }
-
+  
       const updatedData = {
         ...playerData,
         exp: newExp,
         level: newLevel,
         skills: updatedSkills,
       };
-
+  
       setPlayerData(updatedData);
       localStorage.setItem('player', JSON.stringify(updatedData));
-
+  
       if (newLevel > prevLevel) {
         setLevelUpMessage(`Selamat! Anda naik ke level ${newLevel}.`);
         setShowLevelUpModal(true);
       } else {
         setLevelUpMessage('');
       }
-
+  
       setTimeout(() => setSkillMessage(''), 3000);
     } else {
       const updatedData = { ...playerData };
@@ -138,9 +140,10 @@ const Addition = ({ playerData, setPlayerData }) => {
         setPlayerData(updatedData);
         localStorage.setItem('player', JSON.stringify(updatedData));
       } else {
-        alert('Game Over! HP habis.');
+        setShowGameOverModal(true);  // Game Over jika HP habis
       }
     }
+  
     setUserAnswer('');
     generateRandomProblem();
   };
@@ -149,6 +152,19 @@ const Addition = ({ playerData, setPlayerData }) => {
     if (e.key === 'Enter') {
       handleSubmit();
     }
+  };
+
+  const handleRestart = () => {
+    const updatedData = { ...playerData };
+    updatedData.hp = 3; // Misalnya, set HP kembali ke 3 saat melanjutkan
+    setPlayerData(updatedData);
+    localStorage.setItem('player', JSON.stringify(updatedData));
+    setShowGameOverModal(false);
+    generateRandomProblem();
+  };
+
+  const handleClose = () => {
+    alert('Terima kasih sudah bermain!');  // Keluar dari game
   };
 
   return (
@@ -172,6 +188,12 @@ const Addition = ({ playerData, setPlayerData }) => {
 
       <SkillModal showSkillModal={showSkillModal} closeSkillModal={() => setShowSkillModal(false)} />
       <LevelUpModal showLevelUpModal={showLevelUpModal} levelUpMessage={levelUpMessage} closeLevelUpModal={() => setShowLevelUpModal(false)} />
+      
+      <GameOverModal 
+        showGameOverModal={showGameOverModal} 
+        handleClose={handleClose} 
+        handleRestart={handleRestart} 
+      />
     </div>
   );
 };
